@@ -6,6 +6,8 @@ class Requirements {
 	String description
 	String options
 
+	static belongsTo = [auction: Auction]
+
 	static constraints = {
 	}
 }

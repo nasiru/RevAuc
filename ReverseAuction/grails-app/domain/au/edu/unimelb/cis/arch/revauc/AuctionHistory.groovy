@@ -3,6 +3,8 @@ package au.edu.unimelb.cis.arch.revauc
 
 class AuctionHistory {
 
+	static belongsTo = [auction: Auction]
+
 	Date bidDate
 	BigDecimal price
 

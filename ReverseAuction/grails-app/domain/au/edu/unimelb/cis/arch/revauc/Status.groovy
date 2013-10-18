@@ -2,9 +2,8 @@ package au.edu.unimelb.cis.arch.revauc
 
 class Status {
 
-	Auction auction
-	int category
+	String category
 
-	static constraints = {
-	}
+
+	static constraints = { category unique: true }
 }
