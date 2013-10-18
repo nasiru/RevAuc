@@ -9,5 +9,7 @@ class Bids {
 
 	static constraints = {
 		price (nullable: false, min: 0.0, max: 9999.99, scale: 2)
+
 	}
+
 }

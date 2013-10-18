@@ -26,6 +26,21 @@
 				</g:eachError>
 			</ul>
 			</g:hasErrors>
+			
+			<ol class="property-list auction">
+			
+				<li class="fieldcontain">
+					<span class="property-label" aria-labelledby="bids-label">
+						Lowest Bid</span>
+						<span class="property-value" aria-labelledby="bids-label">${params.minBid} 
+						</span>
+					
+				</li>
+				</ol>
+			
+				
+			
+			
 			<g:form action="save" >
 				<fieldset class="form">
 					<g:render template="form"/>

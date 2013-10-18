@@ -16,7 +16,7 @@ class BidsController {
 	}
 
 	def create() {
-		def user = session["auctionID"]
+
 		session["auctionID"] = params.get("auction.id")
 
 		[bidsInstance: new Bids(params)]
@@ -28,6 +28,14 @@ class BidsController {
 		bidsInstance.auction = Auction.get(session["auctionID"])
 		bidsInstance.bidDate = new Date()
 
+		params.minBid = bidsInstance.auction.bids.price.min()
+
+		if (bidsInstance.auction.bids.price.min() && bidsInstance.auction.bids.price.min() <= new BigDecimal(params.price)) {
+			flash.message = message(code: 'bids.highbid.message', args: [])
+
+			render(view: "create", model: [bidsInstance: bidsInstance, params: params])
+			return
+		}
 
 		if (!bidsInstance.save(flush: true)) {
 			render(view: "create", model: [bidsInstance: bidsInstance])

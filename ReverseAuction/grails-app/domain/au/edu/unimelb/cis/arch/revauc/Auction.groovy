@@ -21,5 +21,8 @@ class Auction {
 		}
 	}
 
+	static mapping = {
+		bids sort: 'bidDate', order: 'desc'
+	}
 
 }

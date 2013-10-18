@@ -88,7 +88,7 @@
 						${minBid}
 						<br/><br/>
 					</g:if>
-						<g:link controller="bids" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'bids.label', default: 'Bids')])}</g:link>
+						<g:link controller="bids" action="create" params="['auction.id': auctionInstance?.id, minBid: minBid]">Place Bid</g:link>
 					
 					</span>
 				
@@ -97,16 +97,13 @@
 			
 			<div id="list-bids" class="content scaffold-list" role="main">
 			<h1>Bidding History</h1>
-			<g:if test="${flash.message}">
-			<div class="message" role="status">${flash.message}</div>
-			</g:if>
 			<table>
 				<thead>
 					<tr>
 					
-						<g:sortableColumn property="price" title="${message(code: 'bids.price.label', default: 'Price')}" />
+						<th>Price</th>
 					
-						<g:sortableColumn property="bidDate" title="${message(code: 'bids.bidDate.label', default: 'Bid Date')}" />
+						<th>Bid Date</th>
 					
 					</tr>
 				</thead>
@@ -114,16 +111,16 @@
 				<g:each in="${auctionInstance?.bids?}" status="i" var="bidsInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
+						<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
 					
-						<td><g:link action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
+						<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
 					
 					</tr>
 				</g:each>
 				</tbody>
 			</table>
 			<div class="pagination">
-				<g:paginate total="${auctionInstance?.bids?.size()}" />
+				<g:paginate controller="Bids" total="${auctionInstance?.bids?.size()}" />
 			</div>
 			
 		</div>
