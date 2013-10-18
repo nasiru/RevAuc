@@ -49,7 +49,7 @@ class AuctionController {
 			return
 		}
 
-		[auctionInstance: auctionInstance]
+		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min()]
 	}
 
 	def edit(Long id) {

@@ -3,6 +3,7 @@ package au.edu.unimelb.cis.arch.revauc
 class Bids {
 
 	BigDecimal price
+	Date bidDate
 
 	static belongsTo = [auction: Auction]//, userAccount: UserAccount]
 

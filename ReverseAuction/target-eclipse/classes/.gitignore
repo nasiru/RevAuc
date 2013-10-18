@@ -1,6 +1,7 @@
 /au
 /dbdoc
 /grails
+/target
 /hibernate
 /messages.properties
 /org

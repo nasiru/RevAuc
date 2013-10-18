@@ -23,18 +23,6 @@
 			</g:if>
 			<ol class="property-list auction">
 			
-				<g:if test="${auctionInstance?.auctionHistory}">
-				<li class="fieldcontain">
-					<span id="auctionHistory-label" class="property-label"><g:message code="auction.auctionHistory.label" default="Auction History" /></span>
-					
-						<g:each in="${auctionInstance.auctionHistory}" var="a">
-						<span class="property-value" aria-labelledby="auctionHistory-label"><g:link controller="auctionHistory" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
-			
 				<g:if test="${auctionInstance?.datePosted}">
 				<li class="fieldcontain">
 					<span id="datePosted-label" class="property-label"><g:message code="auction.datePosted.label" default="Date Posted" /></span>
@@ -94,20 +82,51 @@
 				</g:if>
 				
 				<li class="fieldcontain">
-				<span id="bids-label" class="property-label"><g:message code="auction.bids.label" default="Bids" /></span>
+				<span id="bids-label" class="property-label"><g:message code="auction.bids.label" default="Lowest Bid" /></span>
 					<span class="property-value" aria-labelledby="bids-label">
 					<g:if test="${auctionInstance?.bids}">
-						<g:each in="${auctionInstance?.bids?}" var="b">
-						    <g:link controller="bids" action="show" id="${b.id}">${b?.price.encodeAsHTML()}</g:link><br/>
-						</g:each>
-						<br/>
+						${minBid}
+						<br/><br/>
 					</g:if>
 						<g:link controller="bids" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'bids.label', default: 'Bids')])}</g:link>
-						<g:link controller="bids" action="list" >See Bidding History</g:link>
+					
 					</span>
 				
 			
 			</ol>
+			
+			<div id="list-bids" class="content scaffold-list" role="main">
+			<h1>Bidding History</h1>
+			<g:if test="${flash.message}">
+			<div class="message" role="status">${flash.message}</div>
+			</g:if>
+			<table>
+				<thead>
+					<tr>
+					
+						<g:sortableColumn property="price" title="${message(code: 'bids.price.label', default: 'Price')}" />
+					
+						<g:sortableColumn property="bidDate" title="${message(code: 'bids.bidDate.label', default: 'Bid Date')}" />
+					
+					</tr>
+				</thead>
+				<tbody>
+				<g:each in="${auctionInstance?.bids?}" status="i" var="bidsInstance">
+					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+					
+						<td><g:link action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
+					
+						<td><g:link action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
+					
+					</tr>
+				</g:each>
+				</tbody>
+			</table>
+			<div class="pagination">
+				<g:paginate total="${auctionInstance?.bids?.size()}" />
+			</div>
+			
+		</div>
 			<g:form>
 				<fieldset class="buttons">
 					<g:hiddenField name="id" value="${auctionInstance?.id}" />

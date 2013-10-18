@@ -9,9 +9,9 @@ class BootStrap {
 		def statusExpired = new Status(category: "Expired").save();
 
 		def auction1 = new Auction(datePosted: date, dateEnding: date + 1, description: "test 1", status: statusActive).save();
-		def auction2 = new Auction(datePosted: date, timeRemaining: date + 5, description: "longer 5", status: statusActive).save();
-		def auction3 = new Auction(datePosted: date, timeRemaining: date + 7, description: "one week", status: statusActive).save();
-		def auction4 = new Auction(datePosted: date - 2, timeRemaining: date - 1, description: "expired", status: statusExpired).save();
+		def auction2 = new Auction(datePosted: date, dateEnding: date + 5, description: "longer 5", status: statusActive).save();
+		def auction3 = new Auction(datePosted: date, dateEnding: date + 7, description: "one week", status: statusActive).save();
+		def auction4 = new Auction(datePosted: date - 2, dateEnding: date - 1, description: "expired", status: statusExpired).save();
 	}
 	def destroy = {
 	}

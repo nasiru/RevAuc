@@ -26,6 +26,7 @@ class BidsController {
 		def bidsInstance = new Bids(params)
 
 		bidsInstance.auction = Auction.get(session["auctionID"])
+		bidsInstance.bidDate = new Date()
 
 
 		if (!bidsInstance.save(flush: true)) {

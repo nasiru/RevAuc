@@ -1,41 +1,6 @@
 <%@ page import="au.edu.unimelb.cis.arch.revauc.Auction" %>
 
 
-
-<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'auctionHistory', 'error')} ">
-	<label for="auctionHistory">
-		<g:message code="auction.auctionHistory.label" default="Auction History" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${auctionInstance?.auctionHistory?}" var="a">
-    <li><g:link controller="auctionHistory" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="auctionHistory" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'auctionHistory.label', default: 'AuctionHistory')])}</g:link>
-</li>
-</ul>
-
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'bids', 'error')} ">
-	<label for="bids">
-		<g:message code="auction.bids.label" default="Bids" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${auctionInstance?.bids?}" var="b">
-    <li><g:link controller="bids" action="show" id="${b.id}">${b?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="bids" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'bids.label', default: 'Bids')])}</g:link>
-</li>
-</ul>
-
-</div>
-
 <div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'description', 'error')} ">
 	<label for="description">
 		<g:message code="auction.description.label" default="Description" />
@@ -76,14 +41,6 @@
 </li>
 </ul>
 
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'status', 'error')} required">
-	<label for="status">
-		<g:message code="auction.status.label" default="Status" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:select id="status" name="status.id" from="${au.edu.unimelb.cis.arch.revauc.Status.list()}" optionKey="id" required="" value="${auctionInstance?.status?.id}" class="many-to-one"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'dateEnding', 'error')} required">
