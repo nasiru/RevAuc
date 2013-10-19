@@ -28,7 +28,7 @@ class BidsController {
 		bidsInstance.auction = Auction.get(params.auctionId)
 		bidsInstance.bidDate = new Date()
 
-		params.minBid = bidsInstance.auction.bids.price.min()
+		def minBid = bidsInstance.auction.bids.price.min()
 
 		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
 			flash.message = message(code: 'bids.invalid.message', args: [])
@@ -37,14 +37,15 @@ class BidsController {
 			return
 		}
 
-		// optimistic locking check and minimum bid check
-		if (params.minBid && params.minBid - 0.01 <= new BigDecimal(params.price)) {
+		// minimum bid check
+		if (minBid && minBid - 0.01 <= bidsInstance.price) {
 			flash.message = message(code: 'bids.highbid.message', args: [])
 
 			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
 			return
 		}
 
+		// optimistic locking check
 		if (!bidsInstance.save(flush: true)) {
 			flash.message = message(code: 'bids.negative.message', args: [])
 			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)

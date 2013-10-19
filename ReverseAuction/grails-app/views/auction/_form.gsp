@@ -51,3 +51,9 @@
 	<g:datePicker name="dateEnding" precision="day"  value="${auctionInstance?.dateEnding}"  />
 </div>
 
+<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')}">
+	<label for="price">
+		<g:message code="bids.starting.price" default="Starting Price" />
+	</label>
+	<g:field name="price" value="${fieldValue(bean: bidsInstance, field: 'price')}"/>
+</div>

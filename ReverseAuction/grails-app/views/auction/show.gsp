@@ -68,7 +68,7 @@
 				<li class="fieldcontain">
 					<span id="status-label" class="property-label"><g:message code="auction.status.label" default="Status" /></span>
 					
-						<span class="property-value" aria-labelledby="status-label"><g:link controller="status" action="show" id="${auctionInstance?.status?.id}">${auctionInstance?.status?.category.encodeAsHTML()}</g:link></span>
+						<span class="property-value" aria-labelledby="status-label">${auctionInstance?.status?.category.encodeAsHTML()}</span>
 					
 				</li>
 				</g:if>
@@ -97,12 +97,16 @@
 				<ol  style="padding:0px; margin:0px; list-style-type: none">
 					<li class="fieldcontain">
 						<span class="property-value">
-							<g:form controller="bids" action="save" >
-								<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
-								<g:render template="/bids/form"/>
-								<br>
-								<g:submitButton name="create"value="${message(code: 'bids.place', default: 'Place Bid')}" />		
-							</g:form>
+							
+								<g:if test="${auctionInstance?.status.category == 'Active'}">
+									<g:form controller="bids" action="save" >
+										<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
+										<g:render template="/bids/form"/>
+										<br>
+										<g:submitButton name="create"value="${message(code: 'bids.place', default: 'Place Bid')}"/>
+									</g:form>	
+								</g:if>
+							
 						</span>
 					</li>
 				</ol>

@@ -12,6 +12,16 @@ class AuctionController {
 
 	def list(Integer max) {
 		params.max = Math.min(max ?: 10, 100)
+
+		// expire all elapsed auctions
+		def today = new Date()
+		def expiredList = Auction.findAll { dateEnding < today && status.category == "Active"}
+
+		expiredList.each() {
+			it.status.category = Status.get(2).category
+			it.save(flush: true)
+		}
+
 		[auctionInstanceList: Auction.list(params), auctionInstanceTotal: Auction.count()]
 	}
 
@@ -26,8 +36,20 @@ class AuctionController {
 		auctionInstance.status = Status.get(1)
 		auctionInstance.datePosted = new Date()
 
+		def bidsInstance = new Bids(params)
+		bidsInstance.bidDate = new Date()
+
+		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
+			flash.message = message(code: 'bids.invalid.message', args: [])
+
+			redirect(controller: "auction", action: "create", params: params)
+			return
+		}
+
+		auctionInstance.addToBids(bidsInstance)
+
 		if (!auctionInstance.save(flush: true)) {
-			render(view: "create", model: [auctionInstance: auctionInstance])
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
 			return
 		}
 
@@ -40,6 +62,7 @@ class AuctionController {
 
 	def show(Long id) {
 		def auctionInstance = Auction.get(id)
+
 		if (!auctionInstance) {
 			flash.message = message(code: 'default.not.found.message', args: [
 				message(code: 'auction.label', default: 'Auction'),

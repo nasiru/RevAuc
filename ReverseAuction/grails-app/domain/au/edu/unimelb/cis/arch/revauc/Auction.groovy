@@ -13,12 +13,14 @@ class Auction {
 	static constraints = {
 		dateEnding validator: { value, auction, errors ->
 			if ( value < auction.datePosted ) {
-				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before start date.")
+				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before or at the start date.")
 				return false
 			}
 
 			return true
 		}
+
+		description blank: false, nullable: false
 	}
 
 	static mapping = {

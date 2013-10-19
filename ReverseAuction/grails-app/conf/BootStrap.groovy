@@ -7,6 +7,7 @@ class BootStrap {
 		def date = new Date();
 		def statusActive = new Status(category: "Active").save();
 		def statusExpired = new Status(category: "Expired").save();
+		def statusCompleted = new Status(category: "Completed").save();
 
 		def auction1 = new Auction(datePosted: date, dateEnding: date + 1, description: "test 1", status: statusActive).save();
 		def auction2 = new Auction(datePosted: date, dateEnding: date + 5, description: "longer 5", status: statusActive).save();
