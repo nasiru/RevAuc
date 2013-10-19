@@ -2,10 +2,7 @@
 
 
 
-<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')} required">
-	<label for="price">
-		<g:message code="bids.price.label" default="Price" />
-		<span class="required-indicator">*</span>
-	</label>
-	<g:field name="price" value="${fieldValue(bean: bidsInstance, field: 'price')}" required=""/>
+<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')}">
+
+	<g:field name="price" value="${fieldValue(bean: bidsInstance, field: 'price')}"/>
 </div>

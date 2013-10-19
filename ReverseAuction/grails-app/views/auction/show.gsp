@@ -1,3 +1,4 @@
+<%@ page import="au.edu.unimelb.cis.arch.revauc.Bids" %>
 
 <%@ page import="au.edu.unimelb.cis.arch.revauc.Auction" %>
 <!DOCTYPE html>
@@ -86,43 +87,53 @@
 					<span class="property-value" aria-labelledby="bids-label">
 					<g:if test="${auctionInstance?.bids}">
 						${minBid}
-						<br/><br/>
-					</g:if>
-						<g:link controller="bids" action="create" params="['auction.id': auctionInstance?.id, minBid: minBid]">Place Bid</g:link>
-					
+					</g:if>		
 					</span>
+				</li>
 				
 			
 			</ol>
+				
+				<ol  style="padding:0px; margin:0px; list-style-type: none">
+					<li class="fieldcontain">
+						<span class="property-value">
+							<g:form controller="bids" action="save" >
+								<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
+								<g:render template="/bids/form"/>
+								<br>
+								<g:submitButton name="create"value="${message(code: 'bids.place', default: 'Place Bid')}" />		
+							</g:form>
+						</span>
+					</li>
+				</ol>
+			
+			
 			
 			<div id="list-bids" class="content scaffold-list" role="main">
-			<h1>Bidding History</h1>
-			<table>
-				<thead>
-					<tr>
-					
-						<th>Price</th>
-					
-						<th>Bid Date</th>
-					
-					</tr>
-				</thead>
-				<tbody>
-				<g:each in="${auctionInstance?.bids?}" status="i" var="bidsInstance">
-					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-					
-						<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
-					
-						<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
-					
-					</tr>
-				</g:each>
-				</tbody>
-			</table>
-			<div class="pagination">
-				<g:paginate controller="Bids" total="${auctionInstance?.bids?.size()}" />
+				<h1>Bidding History</h1>
+				<table>
+					<thead>
+						<tr>
+						
+							<th>Price</th>
+						
+							<th>Bid Date</th>
+						
+						</tr>
+					</thead>
+					<tbody>
+						<g:each in="${auctionInstance?.bids?}" status="i" var="bidsInstance">
+							<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+								
+								<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
+							
+								<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
+							
+							</tr>
+						</g:each>
+					</tbody>
+				</table>
 			</div>
-			
 		</div>
 			<g:form>
 				<fieldset class="buttons">

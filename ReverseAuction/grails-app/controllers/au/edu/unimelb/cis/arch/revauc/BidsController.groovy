@@ -25,28 +25,37 @@ class BidsController {
 	def save() {
 		def bidsInstance = new Bids(params)
 
-		bidsInstance.auction = Auction.get(session["auctionID"])
+		bidsInstance.auction = Auction.get(params.auctionId)
 		bidsInstance.bidDate = new Date()
 
 		params.minBid = bidsInstance.auction.bids.price.min()
 
-		if (bidsInstance.auction.bids.price.min() && bidsInstance.auction.bids.price.min() <= new BigDecimal(params.price)) {
+		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
+			flash.message = message(code: 'bids.invalid.message', args: [])
+
+			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
+			return
+		}
+
+		// optimistic locking check and minimum bid check
+		if (params.minBid && params.minBid - 0.01 <= new BigDecimal(params.price)) {
 			flash.message = message(code: 'bids.highbid.message', args: [])
 
-			render(view: "create", model: [bidsInstance: bidsInstance, params: params])
+			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
 			return
 		}
 
 		if (!bidsInstance.save(flush: true)) {
-			render(view: "create", model: [bidsInstance: bidsInstance])
+			flash.message = message(code: 'bids.negative.message', args: [])
+			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
 			return
 		}
 
-		flash.message = message(code: 'default.created.message', args: [
+		flash.message = message(code: 'bids.created.message', args: [
 			message(code: 'bids.label', default: 'Bids'),
 			bidsInstance.id
 		])
-		redirect(action: "show", id: bidsInstance.id)
+		redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
 	}
 
 	def show(Long id) {
@@ -93,7 +102,7 @@ class BidsController {
 				bidsInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
 						[
 							message(code: 'bids.label', default: 'Bids')] as Object[],
-						"Another user has updated this Bids while you were editing")
+						"Another user has updated this Bid while you were editing")
 				render(view: "edit", model: [bidsInstance: bidsInstance])
 				return
 			}
@@ -140,4 +149,5 @@ class BidsController {
 			redirect(action: "show", id: id)
 		}
 	}
+
 }

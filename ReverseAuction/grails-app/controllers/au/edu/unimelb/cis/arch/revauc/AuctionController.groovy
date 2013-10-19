@@ -49,7 +49,7 @@ class AuctionController {
 			return
 		}
 
-		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min()]
+		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min(), bidList: auctionInstance.bids.toList()]
 	}
 
 	def edit(Long id) {
@@ -129,4 +129,7 @@ class AuctionController {
 			redirect(action: "show", id: id)
 		}
 	}
+
+	// reserved for future pagination in show.gsp
+	//.size() < 10 ? auctionInstance.bids : auctionInstance.bids.toList().subList(0,10)
 }
