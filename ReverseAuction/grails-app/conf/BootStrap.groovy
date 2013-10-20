@@ -15,9 +15,9 @@ class BootStrap {
 		def userRole = SecRole.findByAuthority("ROLE_USER") ?: new SecRole(authority: "ROLE_USER").save()
 		def adminRole = SecRole.findByAuthority("ROLE_ADMIN") ?: new SecRole(authority: "ROLE_ADMIN").save()
 
-		def user1 = new User(username: "user1", password: "user1", enabled: true).save()
-		def user2 = new User(username: "user2", password: "user2", enabled: true).save()
-		def admin1 = new User(username: "admin1", password: "admin1", enabled: true).save()
+		def user1 = new User(username: "useruser1", password: "1useruser", contactDetails: "Melbourne", enabled: true).save()
+		def user2 = new User(username: "useruser2", password: "2useruser", contactDetails: "Sydney", enabled: true).save()
+		def admin1 = new User(username: "adminadmin1", password: "1adminadmin", contactDetails: "Adelaide", enabled: true).save()
 
 		def statusActive = new Status(category: "Active").save();
 		def statusExpired = new Status(category: "Expired").save();

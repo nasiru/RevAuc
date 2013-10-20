@@ -18,7 +18,7 @@
 					<li><g:link controller="login">Login</g:link></li>
 				</sec:ifNotLoggedIn>
 				<sec:ifLoggedIn>
-					<li><g:link controller="UserAccount">My Account</g:link></li>
+					<li><g:link controller="user" action="show" id="${userid}">My Account</g:link></li>
 					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
 				</sec:ifLoggedIn>
 			</ul>
@@ -35,6 +35,8 @@
 						<g:sortableColumn property="datePosted" title="${message(code: 'auction.datePosted.label', default: 'Date Posted')}" />
 					
 						<g:sortableColumn property="description" title="${message(code: 'auction.description.label', default: 'Description')}" />
+						
+						<g:sortableColumn property="itemCategory.name" title="${message(code: 'auction.item.label', default: 'Item Category')}" />
 					
 						<g:sortableColumn property="status.category" title="${message(code: 'auction.status.category', default: 'Status')}" />
 					
@@ -55,18 +57,25 @@
 						<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "datePosted")}</g:link></td>
 					
 						<td>${fieldValue(bean: auctionInstance, field: "description")}</td>
+						
+						<td>${fieldValue(bean: auctionInstance, field: "itemCategory.name")}</td>
 					
 						<td>${fieldValue(bean: auctionInstance, field: "status.category")}</td>
 					
 						<td><g:formatDate date="${auctionInstance.dateEnding}" /></td>
 						
-						<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "user.username")}</g:link></td>
+						<td><g:link controller="user" action="show" id="${auctionInstance.user.id}">${fieldValue(bean: auctionInstance, field: "user.username")}</g:link></td>
 						
-						<g:if test="${auctionInstance.leader ==  '---'}"> 
-							<td>New!</td>
+						<g:if test="${auctionInstance.status.category !=  'Expired'}"> 
+							<g:if test="${auctionInstance.leader ==  '---'}"> 
+								<td>New!</td>
+							</g:if>
+							<g:else>
+								<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "leader")}</g:link></td>
+							</g:else>
 						</g:if>
-						<g:else>
-							<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "leader")}</g:link></td>
+						<g:else>					
+							<td>Finished</td>
 						</g:else>
 						
 						<td>${auctionInstance.minBid}</td>

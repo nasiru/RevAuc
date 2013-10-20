@@ -8,6 +8,7 @@ class AuctionController {
 	static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	def index() {
+
 		redirect(action: "list", params: params)
 	}
 
@@ -23,7 +24,7 @@ class AuctionController {
 			it.save(flush: true)
 		}
 
-		[auctionInstanceList: Auction.list(params), auctionInstanceTotal: Auction.count()]
+		[auctionInstanceList: Auction.list(params), auctionInstanceTotal: Auction.count(), userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -32,7 +33,7 @@ class AuctionController {
 		'IS_AUTHENTICATED_FULLY'
 	])
 	def create() {
-		[auctionInstance: new Auction(params)]
+		[auctionInstance: new Auction(params), userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -79,15 +80,19 @@ class AuctionController {
 		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
 			flash.message = message(code: 'bids.invalid.message', args: [])
 
-			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userId: currentUser() != null ? currentUser().id : 1])
 			return
 		}
 
 		// save as initial min bid
 		auctionInstance.minBid = bidsInstance.price
 
-		if (!auctionInstance.save(flush: true)) {
-			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
+		def userInstance = User.get(currentUser().id)
+
+		userInstance.addToAuctions(auctionInstance)
+
+		if (!userInstance.save(flush: true)) {
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userId: currentUser() != null ? currentUser().id : 1])
 			return
 		}
 
@@ -110,7 +115,7 @@ class AuctionController {
 			return
 		}
 
-		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min(), bidList: auctionInstance.bids.toList()]
+		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min(), bidList: auctionInstance.bids.toList(), userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -129,7 +134,7 @@ class AuctionController {
 			return
 		}
 
-		[auctionInstance: auctionInstance]
+		[auctionInstance: auctionInstance, userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -230,7 +235,9 @@ class AuctionController {
 	}
 
 	private currentUser() {
-		User.get(springSecurityService.principal.id)
+		if (springSecurityService.isLoggedIn())
+			User.get(springSecurityService.principal.id)
+		else null
 	}
 
 	// reserved for future pagination in show.gsp

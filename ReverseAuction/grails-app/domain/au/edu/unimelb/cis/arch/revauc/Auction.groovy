@@ -25,7 +25,7 @@ class Auction {
 			def now = new Date()
 
 			if ( value <= auction.datePosted) {
-				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before/at the start or current date.")
+				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before/at the start or current date")
 				return false
 			}
 

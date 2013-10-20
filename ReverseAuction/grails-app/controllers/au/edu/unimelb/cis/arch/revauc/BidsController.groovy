@@ -14,7 +14,7 @@ class BidsController {
 
 	def list(Integer max) {
 		params.max = Math.min(max ?: 10, 100)
-		[bidsInstanceList: Bids.list(params), bidsInstanceTotal: Bids.count()]
+		[bidsInstanceList: Bids.list(params), bidsInstanceTotal: Bids.count(), userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -26,7 +26,7 @@ class BidsController {
 
 		session["auctionID"] = params.get("auction.id")
 
-		[bidsInstance: new Bids(params)]
+		[bidsInstance: new Bids(params), userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -36,18 +36,18 @@ class BidsController {
 	])
 	def save() {
 		def bidsInstance = new Bids(params)
-		def auction = Auction.get(params.auctionId)
+		def auctionInstance = Auction.get(params.auctionId)
 
 		//bidsInstance.auction = Auction.get(params.auctionId)
 		bidsInstance.bidDate = new Date()
 		bidsInstance.user = currentUser()
 
-		def minBid = auction.bids.price.min()
+		def minBid = auctionInstance.bids.price.min()
 
 		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
 			flash.message = message(code: 'bids.invalid.message', args: [])
 
-			redirect(controller: "auction", action: "show", id: auction.id)
+			redirect(controller: "auction", action: "show", id: auctionInstance.id)
 			return
 		}
 
@@ -55,21 +55,25 @@ class BidsController {
 		if (minBid && minBid - 0.01 <= bidsInstance.price) {
 			flash.message = message(code: 'bids.highbid.message', args: [])
 
-			redirect(controller: "auction", action: "show", id: auction.id)
+			redirect(controller: "auction", action: "show", id: auctionInstance.id)
 			return
 		}
 
 		// save new leader and min bid
-		auction.minBid = bidsInstance.price
-		auction.leader = bidsInstance.user.username
+		auctionInstance.minBid = bidsInstance.price
+		auctionInstance.leader = bidsInstance.user.username
 
-		auction.addToBids(bidsInstance)
+		auctionInstance.addToBids(bidsInstance)
+
+		def userInstance = User.get(currentUser().id)
+
+		userInstance.addToAuctions(auctionInstance)
 
 		// optimistic locking check
 		//if (!bidsInstance.save(flush: true)) {
-		if (!auction.save(flush: true)) {
+		if (!userInstance.save(flush: true)) {
 			flash.message = message(code: 'bids.negative.message', args: [])
-			redirect(controller: "auction", action: "show", id: auction.id)
+			redirect(controller: "auction", action: "show", id: auctionInstance.id)
 			return
 		}
 
@@ -91,7 +95,7 @@ class BidsController {
 			return
 		}
 
-		[bidsInstance: bidsInstance]
+		[bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
@@ -135,7 +139,7 @@ class BidsController {
 						[
 							message(code: 'bids.label', default: 'Bids')] as Object[],
 						"Another user has updated this Bid while you were editing")
-				render(view: "edit", model: [bidsInstance: bidsInstance])
+				render(view: "edit", model: [bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1])
 				return
 			}
 		}
@@ -143,7 +147,7 @@ class BidsController {
 		bidsInstance.properties = params
 
 		if (!bidsInstance.save(flush: true)) {
-			render(view: "edit", model: [bidsInstance: bidsInstance])
+			render(view: "edit", model: [bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1])
 			return
 		}
 
@@ -188,6 +192,8 @@ class BidsController {
 	}
 
 	private currentUser() {
-		User.get(springSecurityService.principal.id)
+		if (springSecurityService.isLoggedIn())
+			User.get(springSecurityService.principal.id)
+		else null
 	}
 }

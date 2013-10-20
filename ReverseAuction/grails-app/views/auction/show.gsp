@@ -20,7 +20,7 @@
 					<li><g:link controller="login">Login</g:link></li>
 				</sec:ifNotLoggedIn>
 				<sec:ifLoggedIn>
-					<li><g:link controller="UserAccount">My Account</g:link></li>
+					<li><g:link controller="user" action="show" id="${userid}">My Account</g:link></li>
 					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
 				</sec:ifLoggedIn>				
 				
@@ -32,6 +32,15 @@
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>
 			<ol class="property-list auction">
+			
+				<g:if test="${auctionInstance?.user}">
+				<li class="fieldcontain">
+					<span id="user-label" class="property-label"><g:message code="auction.user.label" default="Owner" /></span>
+					
+						<span class="property-value" aria-labelledby="user-label"><g:fieldValue bean="${auctionInstance}" field="user.username" /></span>
+					
+				</li>
+				</g:if>
 			
 				<g:if test="${auctionInstance?.datePosted}">
 				<li class="fieldcontain">
@@ -140,11 +149,11 @@
 						<g:each in="${auctionInstance?.bids?}" status="i" var="bidsInstance">
 							<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 								
-								<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "price")}</g:link></td>
+								<td>${fieldValue(bean: bidsInstance, field: "price")}</td>
 							
-								<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "bidDate")}</g:link></td>
+								<td>${fieldValue(bean: bidsInstance, field: "bidDate")}</td>
 								
-								<td><g:link controller="bids" action="show" id="${bidsInstance.id}">${fieldValue(bean: bidsInstance, field: "user.username")}</g:link></td>
+								<td><g:link controller="user" action="show" id="${bidsInstance.user.id}">${fieldValue(bean: bidsInstance, field: "user.username")}</g:link></td>
 							
 							</tr>
 						</g:each>

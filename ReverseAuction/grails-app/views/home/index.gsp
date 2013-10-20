@@ -89,8 +89,9 @@
 				<li><g:link controller="login">Login</g:link></li>
 			</sec:ifNotLoggedIn>
 			<sec:ifLoggedIn>
-				<li><g:link controller="UserAccount">My Account</g:link></li>
-				<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
+			
+				<li><g:link controller="user" action="show" id="${user}">My Account</g:link></li>
+				<li><g:link controller="logout">Logout <sec:username/></g:link></li>
 			</sec:ifLoggedIn>
 				
 			</ul>
@@ -100,6 +101,7 @@
 	
 				<ul>
 				<li><g:link controller="Auction">View Auctions</g:link></li>
+				<li><g:link controller="User">View Users</g:link></li>
 				<sec:ifAllGranted roles="ROLE_ADMIN">
 				<br/>
 				<h3>Admin Panel</h3>
@@ -112,9 +114,28 @@
 			</div>
 			
 			<div id="page-body" role="main">
-
-		
 			
-		</div>
+			<h1><g:message />Register</h1>
+			<g:if test="${flash.message}">
+			<div class="message" role="status">${flash.message}</div>
+			</g:if>
+			<g:hasErrors bean="${userInstance}">
+			<ul class="errors" role="alert">
+				<g:eachError bean="${userInstance}" var="error">
+				<li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
+				</g:eachError>
+			</ul>
+			</g:hasErrors>
+			
+			<g:form controller="user" action="save" >
+				<fieldset class="form">
+					<g:render template="register"/>
+				</fieldset>
+				<fieldset class="buttons">
+					<g:submitButton controller="user" name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+				</fieldset>
+			</g:form>	
+	
+			</div>
 	</body>
 </html>

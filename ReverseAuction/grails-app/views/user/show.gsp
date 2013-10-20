@@ -13,7 +13,15 @@
 			<ul>
 				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
 				<li><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+				<li><g:link controller="auction" class="list" action="list"><g:message code="default.list.label" args="['Auction']" /></g:link></li>
+				
+				<sec:ifNotLoggedIn>
+					<li><g:link controller="login">Login</g:link></li>
+				</sec:ifNotLoggedIn>
+				<sec:ifLoggedIn>
+					<li><g:link controller="user" action="show" id="${userid}">My Account</g:link></li>
+					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
+				</sec:ifLoggedIn>	
 			</ul>
 		</div>
 		<div id="show-user" class="content scaffold-show" role="main">
@@ -28,15 +36,6 @@
 					<span id="username-label" class="property-label"><g:message code="user.username.label" default="Username" /></span>
 					
 						<span class="property-value" aria-labelledby="username-label"><g:fieldValue bean="${userInstance}" field="username"/></span>
-					
-				</li>
-				</g:if>
-			
-				<g:if test="${userInstance?.password}">
-				<li class="fieldcontain">
-					<span id="password-label" class="property-label"><g:message code="user.password.label" default="Password" /></span>
-					
-						<span class="property-value" aria-labelledby="password-label"><g:fieldValue bean="${userInstance}" field="password"/></span>
 					
 				</li>
 				</g:if>
@@ -59,28 +58,16 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${userInstance?.auctions}">
+				<g:if test="${userInstance?.contactDetails}">
 				<li class="fieldcontain">
-					<span id="auctions-label" class="property-label"><g:message code="user.auctions.label" default="Auctions" /></span>
+					<span id="contactDetails" class="property-label"><g:message code="user.contactDetails.label" default="Contact Details" /></span>
 					
-						<g:each in="${userInstance.auctions}" var="a">
-						<span class="property-value" aria-labelledby="auctions-label"><g:link controller="auction" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></span>
-						</g:each>
+						<span class="property-value" aria-labelledby="contactDetails"><g:fieldValue bean="${userInstance}" field="contactDetails"/></span>
 					
 				</li>
 				</g:if>
-			
-				<g:if test="${userInstance?.bids}">
-				<li class="fieldcontain">
-					<span id="bids-label" class="property-label"><g:message code="user.bids.label" default="Bids" /></span>
-					
-						<g:each in="${userInstance.bids}" var="b">
-						<span class="property-value" aria-labelledby="bids-label"><g:link controller="bids" action="show" id="${b.id}">${b?.encodeAsHTML()}</g:link></span>
-						</g:each>
-					
-				</li>
-				</g:if>
-			
+				
+			<sec:ifAllGranted roles="ROLE_ADMIN">
 				<g:if test="${userInstance?.enabled}">
 				<li class="fieldcontain">
 					<span id="enabled-label" class="property-label"><g:message code="user.enabled.label" default="Enabled" /></span>
@@ -89,6 +76,7 @@
 					
 				</li>
 				</g:if>
+			</sec:ifAllGranted>
 			
 				<g:if test="${userInstance?.passwordExpired}">
 				<li class="fieldcontain">
@@ -100,6 +88,46 @@
 				</g:if>
 			
 			</ol>
+			
+			<div id="list-auction" class="content scaffold-list" role="main">
+				<h1>Bidding History</h1>
+				<table>
+					<thead>
+						<tr>
+						
+							<g:sortableColumn property="auction.description" title="${message(code: 'auction.description.label', default: 'Description')}" />
+						
+							<g:sortableColumn property="bids.price" title="${message(code: 'bid.price.label', default: 'Bid Price')}" />
+							
+							<g:sortableColumn property="bids.bidDate" title="${message(code: 'bid.date.label', default: 'Bid Date')}" />
+						
+							<g:sortableColumn property="auction.minBid" title="${message(code: 'bid.lead.label', default: 'Current Leader')}" />
+						
+							<g:sortableColumn property="auction.status.category" title="${message(code: 'auction.status.category', default: 'Status')}" />
+						
+						</tr>
+					</thead>
+					<tbody>
+					<g:each in="${userInstance?.bids?}" status="i" var="userBid">
+						<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+						
+							<td><g:link controller="auction" action="show" id="${userBid.auction.id}">${fieldValue(bean: userBid, field: "auction.description")}</g:link></td>
+						
+							<td>${fieldValue(bean: userBid, field: "price")}</td>
+							
+							<td>${fieldValue(bean: userBid, field: "bidDate")}</td>
+						
+							<td>${fieldValue(bean: userBid, field: "auction.minBid")}</td>
+						
+							<td>${fieldValue(bean: userBid, field: "auction.status.category")}</td>
+						
+						</tr>
+					</g:each>
+					</tbody>
+				</table>
+			</div>
+		
+		
 			<g:form>
 				<fieldset class="buttons">
 					<g:hiddenField name="id" value="${userInstance?.id}" />

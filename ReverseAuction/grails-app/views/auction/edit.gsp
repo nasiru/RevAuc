@@ -20,7 +20,7 @@
 				</sec:ifNotLoggedIn>
 				<sec:ifLoggedIn>
 				
-					<li><g:link controller="UserAccount">My Account</g:link></li>
+					<li><g:link controller="user" action="show" id="${userid}">My Account</g:link></li>
 					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
 				</sec:ifLoggedIn>
 			</ul>
