@@ -1,9 +1,10 @@
 package au.edu.unimelb.cis.arch.revauc
 
+import grails.plugin.springsecurity.annotation.*
+
 import org.springframework.dao.DataIntegrityViolationException
-
 class AuctionController {
-
+	def springSecurityService
 	static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	def index() {
@@ -25,19 +26,32 @@ class AuctionController {
 		[auctionInstanceList: Auction.list(params), auctionInstanceTotal: Auction.count()]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def create() {
 		[auctionInstance: new Auction(params)]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def save() {
 
 		def auctionInstance = new Auction(params)
-
 		auctionInstance.status = Status.get(1)
 		auctionInstance.datePosted = new Date()
+		auctionInstance.user = currentUser()
+
+		auctionInstance.leader = "---"
 
 		def bidsInstance = new Bids(params)
 		bidsInstance.bidDate = new Date()
+		bidsInstance.user = currentUser()
 
 		// grab all requirements using grep
 		def reqKeys = params.keySet().grep(~/requirementsList\[.+\]/)
@@ -69,6 +83,9 @@ class AuctionController {
 			return
 		}
 
+		// save as initial min bid
+		auctionInstance.minBid = bidsInstance.price
+
 		if (!auctionInstance.save(flush: true)) {
 			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
 			return
@@ -96,6 +113,11 @@ class AuctionController {
 		[auctionInstance: auctionInstance, minBid: auctionInstance.bids.price.min(), bidList: auctionInstance.bids.toList()]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def edit(Long id) {
 		def auctionInstance = Auction.get(id)
 		if (!auctionInstance) {
@@ -110,6 +132,11 @@ class AuctionController {
 		[auctionInstance: auctionInstance]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def update(Long id, Long version) {
 		def auctionInstance = Auction.get(id)
 		if (!auctionInstance) {
@@ -169,6 +196,11 @@ class AuctionController {
 		redirect(action: "show", id: auctionInstance.id)
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def delete(Long id) {
 		def auctionInstance = Auction.get(id)
 		if (!auctionInstance) {
@@ -195,6 +227,10 @@ class AuctionController {
 			])
 			redirect(action: "show", id: id)
 		}
+	}
+
+	private currentUser() {
+		User.get(springSecurityService.principal.id)
 	}
 
 	// reserved for future pagination in show.gsp

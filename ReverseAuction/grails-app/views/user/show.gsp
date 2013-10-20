@@ -32,13 +32,69 @@
 				</li>
 				</g:if>
 			
-				<g:if test="${userInstance?.userAccount}">
+				<g:if test="${userInstance?.password}">
 				<li class="fieldcontain">
-					<span id="userAccount-label" class="property-label"><g:message code="user.userAccount.label" default="User Account" /></span>
+					<span id="password-label" class="property-label"><g:message code="user.password.label" default="Password" /></span>
 					
-						<g:each in="${userInstance.userAccount}" var="u">
-						<span class="property-value" aria-labelledby="userAccount-label"><g:link controller="userAccount" action="show" id="${u.id}">${u?.encodeAsHTML()}</g:link></span>
+						<span class="property-value" aria-labelledby="password-label"><g:fieldValue bean="${userInstance}" field="password"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.accountExpired}">
+				<li class="fieldcontain">
+					<span id="accountExpired-label" class="property-label"><g:message code="user.accountExpired.label" default="Account Expired" /></span>
+					
+						<span class="property-value" aria-labelledby="accountExpired-label"><g:formatBoolean boolean="${userInstance?.accountExpired}" /></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.accountLocked}">
+				<li class="fieldcontain">
+					<span id="accountLocked-label" class="property-label"><g:message code="user.accountLocked.label" default="Account Locked" /></span>
+					
+						<span class="property-value" aria-labelledby="accountLocked-label"><g:formatBoolean boolean="${userInstance?.accountLocked}" /></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.auctions}">
+				<li class="fieldcontain">
+					<span id="auctions-label" class="property-label"><g:message code="user.auctions.label" default="Auctions" /></span>
+					
+						<g:each in="${userInstance.auctions}" var="a">
+						<span class="property-value" aria-labelledby="auctions-label"><g:link controller="auction" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></span>
 						</g:each>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.bids}">
+				<li class="fieldcontain">
+					<span id="bids-label" class="property-label"><g:message code="user.bids.label" default="Bids" /></span>
+					
+						<g:each in="${userInstance.bids}" var="b">
+						<span class="property-value" aria-labelledby="bids-label"><g:link controller="bids" action="show" id="${b.id}">${b?.encodeAsHTML()}</g:link></span>
+						</g:each>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.enabled}">
+				<li class="fieldcontain">
+					<span id="enabled-label" class="property-label"><g:message code="user.enabled.label" default="Enabled" /></span>
+					
+						<span class="property-value" aria-labelledby="enabled-label"><g:formatBoolean boolean="${userInstance?.enabled}" /></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${userInstance?.passwordExpired}">
+				<li class="fieldcontain">
+					<span id="passwordExpired-label" class="property-label"><g:message code="user.passwordExpired.label" default="Password Expired" /></span>
+					
+						<span class="property-value" aria-labelledby="passwordExpired-label"><g:formatBoolean boolean="${userInstance?.passwordExpired}" /></span>
 					
 				</li>
 				</g:if>

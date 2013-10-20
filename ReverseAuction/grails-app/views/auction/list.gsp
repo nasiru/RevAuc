@@ -12,7 +12,15 @@
 		<div class="nav" role="navigation">
 			<ul>
 				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+				
+					<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+				<sec:ifNotLoggedIn>
+					<li><g:link controller="login">Login</g:link></li>
+				</sec:ifNotLoggedIn>
+				<sec:ifLoggedIn>
+					<li><g:link controller="UserAccount">My Account</g:link></li>
+					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
+				</sec:ifLoggedIn>
 			</ul>
 		</div>
 		<div id="list-auction" class="content scaffold-list" role="main">
@@ -28,9 +36,15 @@
 					
 						<g:sortableColumn property="description" title="${message(code: 'auction.description.label', default: 'Description')}" />
 					
-						<th><g:message code="auction.status.category" default="Status" /></th>
+						<g:sortableColumn property="status.category" title="${message(code: 'auction.status.category', default: 'Status')}" />
 					
 						<g:sortableColumn property="dateEnding" title="${message(code: 'auction.dateEnding.label', default: 'Date Ending')}" />
+						
+						<g:sortableColumn property="user.username" title="${message(code: 'auction.user.name.label', default: 'Owner')}" />
+						
+						<g:sortableColumn property="leader" title="${message(code: 'auction.bid.lowestbidder.label', default: 'Leader')}" />
+						
+						<g:sortableColumn property="minBid" title="${message(code: 'auction.bid.currentprice.label', default: 'Price')}" />
 					
 					</tr>
 				</thead>
@@ -45,6 +59,17 @@
 						<td>${fieldValue(bean: auctionInstance, field: "status.category")}</td>
 					
 						<td><g:formatDate date="${auctionInstance.dateEnding}" /></td>
+						
+						<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "user.username")}</g:link></td>
+						
+						<g:if test="${auctionInstance.leader ==  '---'}"> 
+							<td>New!</td>
+						</g:if>
+						<g:else>
+							<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "leader")}</g:link></td>
+						</g:else>
+						
+						<td>${auctionInstance.minBid}</td>
 					
 					</tr>
 				</g:each>

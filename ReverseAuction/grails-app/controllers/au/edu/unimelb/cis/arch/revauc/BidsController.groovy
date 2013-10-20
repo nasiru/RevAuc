@@ -1,8 +1,10 @@
 package au.edu.unimelb.cis.arch.revauc
 
-import org.springframework.dao.DataIntegrityViolationException
+import grails.plugin.springsecurity.annotation.*
 
+import org.springframework.dao.DataIntegrityViolationException
 class BidsController {
+	def springSecurityService
 
 	static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -15,6 +17,11 @@ class BidsController {
 		[bidsInstanceList: Bids.list(params), bidsInstanceTotal: Bids.count()]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def create() {
 
 		session["auctionID"] = params.get("auction.id")
@@ -22,18 +29,25 @@ class BidsController {
 		[bidsInstance: new Bids(params)]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def save() {
 		def bidsInstance = new Bids(params)
+		def auction = Auction.get(params.auctionId)
 
-		bidsInstance.auction = Auction.get(params.auctionId)
+		//bidsInstance.auction = Auction.get(params.auctionId)
 		bidsInstance.bidDate = new Date()
+		bidsInstance.user = currentUser()
 
-		def minBid = bidsInstance.auction.bids.price.min()
+		def minBid = auction.bids.price.min()
 
 		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
 			flash.message = message(code: 'bids.invalid.message', args: [])
 
-			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
+			redirect(controller: "auction", action: "show", id: auction.id)
 			return
 		}
 
@@ -41,14 +55,21 @@ class BidsController {
 		if (minBid && minBid - 0.01 <= bidsInstance.price) {
 			flash.message = message(code: 'bids.highbid.message', args: [])
 
-			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
+			redirect(controller: "auction", action: "show", id: auction.id)
 			return
 		}
 
+		// save new leader and min bid
+		auction.minBid = bidsInstance.price
+		auction.leader = bidsInstance.user.username
+
+		auction.addToBids(bidsInstance)
+
 		// optimistic locking check
-		if (!bidsInstance.save(flush: true)) {
+		//if (!bidsInstance.save(flush: true)) {
+		if (!auction.save(flush: true)) {
 			flash.message = message(code: 'bids.negative.message', args: [])
-			redirect(controller: "auction", action: "show", id: bidsInstance.auction.id)
+			redirect(controller: "auction", action: "show", id: auction.id)
 			return
 		}
 
@@ -73,6 +94,11 @@ class BidsController {
 		[bidsInstance: bidsInstance]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def edit(Long id) {
 		def bidsInstance = Bids.get(id)
 		if (!bidsInstance) {
@@ -87,6 +113,11 @@ class BidsController {
 		[bidsInstance: bidsInstance]
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def update(Long id, Long version) {
 		def bidsInstance = Bids.get(id)
 		if (!bidsInstance) {
@@ -123,6 +154,11 @@ class BidsController {
 		redirect(action: "show", id: bidsInstance.id)
 	}
 
+	@Secured([
+		'ROLE_USER',
+		'ROLE_ADMIN',
+		'IS_AUTHENTICATED_FULLY'
+	])
 	def delete(Long id) {
 		def bidsInstance = Bids.get(id)
 		if (!bidsInstance) {
@@ -151,4 +187,7 @@ class BidsController {
 		}
 	}
 
+	private currentUser() {
+		User.get(springSecurityService.principal.id)
+	}
 }

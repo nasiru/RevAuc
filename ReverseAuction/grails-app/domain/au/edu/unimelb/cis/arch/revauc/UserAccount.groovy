@@ -2,8 +2,8 @@ package au.edu.unimelb.cis.arch.revauc
 
 class UserAccount {
 
-	static belongsTo = [user: User]
-	static hasMany = [bids: Bids, auctions: Auction]
+	//static belongsTo = [user: User]
+	//static hasMany = [bids: Bids, auctions: Auction]
 
 
 

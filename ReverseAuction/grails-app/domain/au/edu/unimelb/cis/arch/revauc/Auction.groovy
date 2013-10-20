@@ -12,7 +12,11 @@ class Auction {
 	ItemCategory itemCategory
 	List requirements = new ArrayList()
 
+	BigDecimal minBid
+	String leader
+
 	static hasMany = [bids: Bids, requirements: Requirements]
+	static belongsTo = [user: User]
 	//static hasOne = [auctionHistory: AuctionHistory]
 
 

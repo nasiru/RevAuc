@@ -1,12 +1,10 @@
 package au.edu.unimelb.cis.arch.revauc
 
-class User {
+class User extends SecUser {
 
-	String username
-
-	static hasMany = [userAccount: UserAccount]
+	//static hasMany = [userAccount: UserAccount]
+	static hasMany = [bids: Bids, auctions: Auction]
 
 	static constraints = {
-		username (blank:false, nullable:false, size:3..30, matches:"[a-zA-Z0-9_]+")
 	}
 }
