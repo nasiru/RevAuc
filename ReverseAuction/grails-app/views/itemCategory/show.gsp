@@ -23,15 +23,6 @@
 			</g:if>
 			<ol class="property-list itemCategory">
 			
-				<g:if test="${itemCategoryInstance?.auction}">
-				<li class="fieldcontain">
-					<span id="auction-label" class="property-label"><g:message code="itemCategory.auction.label" default="Auction" /></span>
-					
-						<span class="property-value" aria-labelledby="auction-label"><g:link controller="auction" action="show" id="${itemCategoryInstance?.auction?.id}">${itemCategoryInstance?.auction?.encodeAsHTML()}</g:link></span>
-					
-				</li>
-				</g:if>
-			
 				<g:if test="${itemCategoryInstance?.description}">
 				<li class="fieldcontain">
 					<span id="description-label" class="property-label"><g:message code="itemCategory.description.label" default="Description" /></span>

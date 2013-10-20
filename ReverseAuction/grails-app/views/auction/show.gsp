@@ -47,7 +47,7 @@
 					<span id="itemCategory-label" class="property-label"><g:message code="auction.itemCategory.label" default="Item Category" /></span>
 					
 						<g:each in="${auctionInstance.itemCategory}" var="i">
-						<span class="property-value" aria-labelledby="itemCategory-label"><g:link controller="itemCategory" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></span>
+						<span class="property-value" aria-labelledby="itemCategory-label">${i?.name.encodeAsHTML()}</span>
 						</g:each>
 					
 				</li>
@@ -58,7 +58,7 @@
 					<span id="requirements-label" class="property-label"><g:message code="auction.requirements.label" default="Requirements" /></span>
 					
 						<g:each in="${auctionInstance.requirements}" var="r">
-						<span class="property-value" aria-labelledby="requirements-label"><g:link controller="requirements" action="show" id="${r.id}">${r?.encodeAsHTML()}</g:link></span>
+						<span class="property-value" aria-labelledby="requirements-label">${r?.description.encodeAsHTML()}</span>
 						</g:each>
 					
 				</li>

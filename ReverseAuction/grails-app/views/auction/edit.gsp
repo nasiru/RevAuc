@@ -39,5 +39,8 @@
 				</fieldset>
 			</g:form>
 		</div>
+		
+		<g:render template='requirement' model="['requirement':null,'i':'_clone','hidden':true]"/>
+				
 	</body>
 </html>

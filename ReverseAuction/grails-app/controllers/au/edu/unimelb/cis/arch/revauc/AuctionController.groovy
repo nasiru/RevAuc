@@ -39,14 +39,35 @@ class AuctionController {
 		def bidsInstance = new Bids(params)
 		bidsInstance.bidDate = new Date()
 
-		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
-			flash.message = message(code: 'bids.invalid.message', args: [])
+		// grab all requirements using grep
+		def reqKeys = params.keySet().grep(~/requirementsList\[.+\]/)
+		def reqMap = params.subMap(reqKeys) as TreeMap
 
-			redirect(controller: "auction", action: "create", params: params)
-			return
+		// clear all to refresh
+		auctionInstance.requirements.clear()
+
+		reqMap.each() {
+			//println it.value
+			auctionInstance.addToRequirements(new Requirements(it.value))
+		}
+
+		// find the requirements that are marked for deletion
+		def _toBeDeleted = auctionInstance.getRequirementsList().findAll {(it?.deleted || (it == null))}
+
+
+		// if there are requirements to be deleted remove them all
+		if (_toBeDeleted) {
+			auctionInstance.requirements.removeAll(_toBeDeleted)
 		}
 
 		auctionInstance.addToBids(bidsInstance)
+
+		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
+			flash.message = message(code: 'bids.invalid.message', args: [])
+
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
+			return
+		}
 
 		if (!auctionInstance.save(flush: true)) {
 			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance])
@@ -112,6 +133,29 @@ class AuctionController {
 		}
 
 		auctionInstance.properties = params
+
+		// grab all requirements using grep
+		def reqKeys = params.keySet().grep(~/requirementsList\[.+\]/)
+		def reqMap = params.subMap(reqKeys) as TreeMap
+
+		// clear all to refresh
+		auctionInstance.requirements.clear()
+
+		reqMap.each() {
+			//println it.value
+			auctionInstance.addToRequirements(new Requirements(it.value))
+		}
+
+		// find the requirements that are marked for deletion
+		def _toBeDeleted = auctionInstance.getRequirementsList().findAll {(it?.deleted || (it == null))}
+
+
+		// if there are requirements to be deleted remove them all
+		if (_toBeDeleted) {
+			auctionInstance.requirements.removeAll(_toBeDeleted)
+		}
+
+
 
 		if (!auctionInstance.save(flush: true)) {
 			render(view: "edit", model: [auctionInstance: auctionInstance])

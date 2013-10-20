@@ -1,30 +1,46 @@
 package au.edu.unimelb.cis.arch.revauc
 
+import org.apache.commons.collections.FactoryUtils
+import org.apache.commons.collections.list.LazyList
+
 class Auction {
 
 	Date dateEnding
 	Date datePosted
 	String description
 	Status status
+	ItemCategory itemCategory
+	List requirements = new ArrayList()
 
-	static hasMany = [bids: Bids, itemCategory: ItemCategory, requirements: Requirements]
+	static hasMany = [bids: Bids, requirements: Requirements]
 	//static hasOne = [auctionHistory: AuctionHistory]
+
 
 	static constraints = {
 		dateEnding validator: { value, auction, errors ->
-			if ( value < auction.datePosted ) {
-				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before or at the start date.")
+			def now = new Date()
+
+			if ( value <= auction.datePosted) {
+				errors.rejectValue( "dateEnding", "auction.dateEnding.afterDatePosted", "End date cannot be before/at the start or current date.")
 				return false
 			}
 
 			return true
 		}
 
-		description blank: false, nullable: false
+		description blank: false, nullable: false, size: 1..50
+
 	}
 
 	static mapping = {
 		bids sort: 'bidDate', order: 'desc'
+		requirements cascade: "all-delete-orphan"
+	}
+
+	def getRequirementsList() {
+		return LazyList.decorate(
+		requirements,
+		FactoryUtils.instantiateFactory(Requirements.class))
 	}
 
 }

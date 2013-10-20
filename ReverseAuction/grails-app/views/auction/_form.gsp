@@ -1,5 +1,14 @@
 <%@ page import="au.edu.unimelb.cis.arch.revauc.Auction" %>
 
+<g:if test="${auctionInstance.id != null}">
+	<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')}">
+		<label for="price">
+			<g:message code="auction.datePosted.label" default="Date Posted" />
+		</label>
+		
+		${auctionInstance.datePosted}
+	</div>
+</g:if>
 
 <div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'description', 'error')} ">
 	<label for="description">
@@ -9,38 +18,16 @@
 	<g:textField name="description" value="${auctionInstance?.description}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'itemCategory', 'error')} ">
+<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'itemCategory')} ">
 	<label for="itemCategory">
 		<g:message code="auction.itemCategory.label" default="Item Category" />
 		
 	</label>
 	
-<ul class="one-to-many">
-<g:each in="${auctionInstance?.itemCategory?}" var="i">
-    <li><g:link controller="itemCategory" action="show" id="${i.id}">${i?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="itemCategory" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'itemCategory.label', default: 'ItemCategory')])}</g:link>
-</li>
-</ul>
-
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'requirements', 'error')} ">
-	<label for="requirements">
-		<g:message code="auction.requirements.label" default="Requirements" />
-		
-	</label>
-	
-<ul class="one-to-many">
-<g:each in="${auctionInstance?.requirements?}" var="r">
-    <li><g:link controller="requirements" action="show" id="${r.id}">${r?.encodeAsHTML()}</g:link></li>
-</g:each>
-<li class="add">
-<g:link controller="requirements" action="create" params="['auction.id': auctionInstance?.id]">${message(code: 'default.add.label', args: [message(code: 'requirements.label', default: 'Requirements')])}</g:link>
-</li>
-</ul>
-
+	<g:select name="itemCategory.id"
+          from="${au.edu.unimelb.cis.arch.revauc.ItemCategory.list()}"
+          value="${auctionInstance?.itemCategory?.id ?: 1}"
+          optionKey="id" optionValue="name" />
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'dateEnding', 'error')} required">
@@ -48,12 +35,25 @@
 		<g:message code="auction.dateEnding.label" default="Date Ending" />
 		<span class="required-indicator">*</span>
 	</label>
-	<g:datePicker name="dateEnding" precision="day"  value="${auctionInstance?.dateEnding}"  />
+	<g:datePicker name="dateEnding" precision="day" years="${(new Date().year + 1900)..(new Date().year + 1901)}" value="${auctionInstance?.dateEnding}"  />
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')}">
-	<label for="price">
-		<g:message code="bids.starting.price" default="Starting Price" />
+<g:if test="${auctionInstance.id == null}">
+	<div class="fieldcontain ${hasErrors(bean: bidsInstance, field: 'price', 'error')}">
+		<label for="price">
+			<g:message code="bids.starting.price" default="Starting Price" />
+		</label>
+		
+		<g:field type="BigDecimal" name="price" value="${fieldValue(bean: bidsInstance, field: 'price')}"/>
+	</div>
+</g:if>
+
+<div class="fieldcontain ${hasErrors(bean: auctionInstance, field: 'requirements', 'error')} ">
+	<label for="requirements">
+		<g:message code="auction.requirements.label" default="Requirements" />
+		
 	</label>
-	<g:field name="price" value="${fieldValue(bean: bidsInstance, field: 'price')}"/>
+	
+<g:render template="requirements" model="['auctionInstance':auctionInstance]" />
+
 </div>

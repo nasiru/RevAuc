@@ -24,8 +24,6 @@
 				<thead>
 					<tr>
 					
-						<th><g:message code="itemCategory.auction.label" default="Auction" /></th>
-					
 						<g:sortableColumn property="description" title="${message(code: 'itemCategory.description.label', default: 'Description')}" />
 					
 						<g:sortableColumn property="name" title="${message(code: 'itemCategory.name.label', default: 'Name')}" />
@@ -36,9 +34,7 @@
 				<g:each in="${itemCategoryInstanceList}" status="i" var="itemCategoryInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
-						<td><g:link action="show" id="${itemCategoryInstance.id}">${fieldValue(bean: itemCategoryInstance, field: "auction")}</g:link></td>
-					
-						<td>${fieldValue(bean: itemCategoryInstance, field: "description")}</td>
+						<td><g:link action="show" id="${itemCategoryInstance.id}">${fieldValue(bean: itemCategoryInstance, field: "description")}</g:link></td>
 					
 						<td>${fieldValue(bean: itemCategoryInstance, field: "name")}</td>
 					

@@ -5,6 +5,7 @@
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="${message(code: 'auction.label', default: 'Auction')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
+		
 	</head>
 	<body>
 		<a href="#create-auction" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
@@ -35,5 +36,8 @@
 				</fieldset>
 			</g:form>
 		</div>
+		
+		<g:render template='requirement' model="['requirement':null,'i':'_clone','hidden':true]"/>
+		
 	</body>
 </html>
