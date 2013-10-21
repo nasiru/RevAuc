@@ -1,5 +1,12 @@
 <%@ page import="au.edu.unimelb.cis.arch.revauc.User" %>
 
+<div class="fieldcontain ${hasErrors(bean: userInstance, field: 'username', 'error')} required">
+	<label for="username">
+		<g:message code="user.username.label" default="Username" />
+		<span class="required-indicator">*</span>
+	</label>
+	<g:passwordField name="username" required="" value="${userInstance?.username}"/>
+</div>
 
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'password', 'error')} required">
@@ -85,7 +92,7 @@
 	<g:checkBox name="passwordExpired" value="${userInstance?.passwordExpired}" />
 </div>
 
-</sec:ifAllGranted>
+
 
 <div class="fieldcontain ${hasErrors(bean: userInstance, field: 'secrole')} ">
 	<label for="secrole">
@@ -98,4 +105,4 @@
           value="${1}"
           optionKey="id" optionValue="authority" />
 </div>
-
+</sec:ifAllGranted>

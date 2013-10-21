@@ -59,16 +59,16 @@
 						
 						<td><g:link controller="user" action="show" id="${auctionInstance.user.id}">${fieldValue(bean: auctionInstance, field: "user.username")}</g:link></td>
 						
-						<g:if test="${auctionInstance.status.category !=  'Expired'}"> 
+						<g:if test="${auctionInstance.status.category ==  'Active'}"> 
 							<g:if test="${auctionInstance.leader ==  '---'}"> 
 								<td>New!</td>
 							</g:if>
 							<g:else>
-								<td><g:link action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "leader")}</g:link></td>
+								<td>${fieldValue(bean: auctionInstance, field: "leader")}</td>
 							</g:else>
 						</g:if>
 						<g:else>					
-							<td>Finished</td>
+							<td>${fieldValue(bean: auctionInstance, field: "leader")}</td>
 						</g:else>
 						
 						<td>${auctionInstance.minBid}</td>

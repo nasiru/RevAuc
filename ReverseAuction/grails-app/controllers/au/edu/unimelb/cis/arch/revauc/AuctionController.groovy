@@ -20,7 +20,7 @@ class AuctionController {
 		def expiredList = Auction.findAll { dateEnding < today && status.category == "Active"}
 
 		expiredList.each() {
-			it.status.category = Status.get(2).category
+			it.status = Status.findByCategory("Expired")
 			it.save(flush: true)
 		}
 
@@ -79,7 +79,7 @@ class AuctionController {
 		if(bidsInstance.hasErrors() || params.price.isEmpty()) {
 			flash.message = message(code: 'bids.invalid.message', args: [])
 
-			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userId: currentUser() != null ? currentUser().id : 1])
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1])
 			return
 		}
 
@@ -91,7 +91,7 @@ class AuctionController {
 		userInstance.addToAuctions(auctionInstance)
 
 		if (!userInstance.save(flush: true)) {
-			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userId: currentUser() != null ? currentUser().id : 1])
+			render(view: "create", model: [auctionInstance: auctionInstance, bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1])
 			return
 		}
 
@@ -158,7 +158,7 @@ class AuctionController {
 						[
 							message(code: 'auction.label', default: 'Auction')] as Object[],
 						"Another user has updated this Auction while you were editing")
-				render(view: "edit", model: [auctionInstance: auctionInstance])
+				render(view: "edit", model: [auctionInstance: auctionInstance, userid: currentUser() != null ? currentUser().id : 1])
 				return
 			}
 		}
@@ -188,7 +188,7 @@ class AuctionController {
 
 
 		if (!auctionInstance.save(flush: true)) {
-			render(view: "edit", model: [auctionInstance: auctionInstance])
+			render(view: "edit", model: [auctionInstance: auctionInstance, userid: currentUser() != null ? currentUser().id : 1, id: auctionInstance.id])
 			return
 		}
 
@@ -230,6 +230,16 @@ class AuctionController {
 			])
 			redirect(action: "show", id: id)
 		}
+	}
+
+	def close() {
+		def auctionInstance = Auction.get(params.auctionId)
+
+		auctionInstance.status = Status.findByCategory("Completed")
+
+		auctionInstance.save()
+
+		redirect(action: "show", id: params.auctionId)
 	}
 
 	private currentUser() {

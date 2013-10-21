@@ -12,7 +12,9 @@
 		<div class="nav" role="navigation">
 			<ul>
 				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+				<sec:ifAllGranted roles="ROLE_ADMIN">
+					<li><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></li>
+				</sec:ifAllGranted>
 				<g:render template="/home/navbartop"/>
 			</ul>
 		</div>
@@ -27,7 +29,7 @@
 					
 						<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" />
 					
-						<g:sortableColumn property="authority" title="${message(code: 'user.secrole.label', default: 'Authorization')}" />
+						<th>${message(code: 'user.secrole.label', default: 'Authorization')}</th>
 					
 						<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
 					

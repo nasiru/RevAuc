@@ -43,7 +43,7 @@
 					</g:form>
 				</sec:ifAllGranted>
 				<sec:ifAllGranted roles="ROLE_USER">
-					<g:if test="${userid == auctionInstance.user.id }">
+					<g:if test="${userid == auctionInstance.user.id && auctionInstance.status.category == 'Active' }">
 						<g:form>
 						<fieldset class="buttons">
 							<g:actionSubmit class="save" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />

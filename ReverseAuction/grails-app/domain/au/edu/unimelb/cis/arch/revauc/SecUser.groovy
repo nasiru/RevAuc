@@ -14,17 +14,23 @@ class SecUser {
 	static transients = ['springSecurityService']
 
 	static constraints = {
-		username blank: false, unique: true, matches:/[a-zA-Z][a-zA-Z0-9]+/, size: 5..12
+		username blank: false, unique: true, matches:/[a-zA-Z][a-zA-Z0-9]+/, size: 4..12
 
-		password validator: { String password, user ->
-			if (user.username && user.username.equals(password)) {
-				return 'user.password.error.username'
+		password validator: { String password, user, errors ->
+
+			// skip validation of hashed password
+			if (password.length() == 60) {
+				return true
 			}
 
-			if (password && password.length() >= 8 && password.length() <= 16 &&
-			(!password.matches('^.*\\p{Alpha}.*$') ||
-			!password.matches('^.*\\p{Digit}.*$'))) {
-				return 'user.password.error.username'
+			if (user.username.equals(password)) {
+				errors.rejectValue( "password", "user.password.error.username", "Password must be of size 4-12, have a letter and a number, and is not the same as the Username")
+				return false
+			}
+
+			if (password.length() < 4 || password.length() > 12 || !password.matches('^.*\\p{Alpha}.*$') || !password.matches('^.*\\p{Digit}.*$')) {
+				errors.rejectValue( "password", "user.password.error.username", "Password must be of size 4-12, have a letter and a number, and is not the same as the Username")
+				return false
 			}
 		}
 	}

@@ -27,9 +27,8 @@
 				<g:if test="${auctionInstance?.user}">
 				<li class="fieldcontain">
 					<span id="user-label" class="property-label"><g:message code="auction.user.label" default="Owner" /></span>
-					
-						<span class="property-value" aria-labelledby="user-label"><g:fieldValue bean="${auctionInstance}" field="user.username" /></span>
-					
+						
+					<g:link class="property-value" aria-labelledby="user-label" controller="user" action="show" id="${auctionInstance.user.id}">${fieldValue(bean: auctionInstance, field: "user.username")}</g:link>
 				</li>
 				</g:if>
 			
@@ -103,22 +102,51 @@
 			
 			</ol>
 				
-				<ol  style="padding:0px; margin:0px; list-style-type: none">
-					<li class="fieldcontain">
-						<span class="property-value">
-							
-								<g:if test="${auctionInstance?.status.category == 'Active'}">
-									<g:form controller="bids" action="save" >
+				
+				<g:if test="${auctionInstance?.status.category == 'Active'}">
+					<g:if test="${userid != auctionInstance.user.id }">
+						<ol  style="padding:0px; margin:0px; list-style-type: none">
+							<li class="fieldcontain">
+								<span class="property-value">
+									
+											<g:form controller="bids" action="save" >
+												<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
+												<g:render template="/bids/form"/>
+												<br>
+												<g:submitButton name="create"value="${message(code: 'bids.place', default: 'Place Bid')}"/>
+											</g:form>	
+																
+								</span>
+							</li>
+						</ol>
+						
+						<sec:ifAllGranted roles="ROLE_ADMIN">
+							<ol  style="padding:0px; margin:0px; list-style-type: none">
+								<li class="fieldcontain">
+									<span class="property-value">
+										<g:form controller="auction" action="close">
+											<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
+											<g:submitButton name="close" value="${message(code: 'auction.end', default: 'Close Auction')}"/>
+										</g:form>
+									</span>
+								</li>
+							</ol>
+						</sec:ifAllGranted>
+					</g:if>
+					<g:else>
+					
+						<ol  style="padding:0px; margin:0px; list-style-type: none">
+							<li class="fieldcontain">
+								<span class="property-value">
+									<g:form controller="auction" action="close">
 										<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
-										<g:render template="/bids/form"/>
-										<br>
-										<g:submitButton name="create"value="${message(code: 'bids.place', default: 'Place Bid')}"/>
-									</g:form>	
-								</g:if>
-							
-						</span>
-					</li>
-				</ol>
+										<g:submitButton name="close" value="${message(code: 'auction.end', default: 'Close Auction')}"/>
+									</g:form>
+								</span>
+							</li>
+						</ol>
+					</g:else>
+				</g:if>		
 			
 			
 			
@@ -162,7 +190,7 @@
 			</g:form>
 		</sec:ifAllGranted>
 		<sec:ifAllGranted roles="ROLE_USER">
-			<g:if test="${userid == auctionInstance.user.id }">
+			<g:if test="${userid == auctionInstance.user.id && auctionInstance?.status.category == 'Active'}">
 				<g:form>
 					<fieldset class="buttons">
 						<g:hiddenField name="id" value="${auctionInstance?.id}" />

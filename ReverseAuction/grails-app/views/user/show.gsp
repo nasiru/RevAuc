@@ -81,10 +81,68 @@
 			</ol>
 			
 			<div id="list-auction" class="content scaffold-list" role="main">
+				<h1>Auctions</h1>
+				<table>
+					<thead>
+						<tr>
+						
+							<g:sortableColumn property="datePosted" title="${message(code: 'auction.datePosted.label', default: 'Date Posted')}" />
+						
+							<g:sortableColumn property="description" title="${message(code: 'auction.description.label', default: 'Description')}" />
+							
+							<g:sortableColumn property="itemCategory.name" title="${message(code: 'auction.item.label', default: 'Item Category')}" />
+						
+							<g:sortableColumn property="status.category" title="${message(code: 'auction.status.category', default: 'Status')}" />
+						
+							<g:sortableColumn property="dateEnding" title="${message(code: 'auction.dateEnding.label', default: 'Date Ending')}" />
+							
+							<g:sortableColumn property="leader" title="${message(code: 'auction.bid.lowestbidder.label', default: 'Leader')}" />
+							
+							<g:sortableColumn property="minBid" title="${message(code: 'auction.bid.currentprice.label', default: 'Price')}" />
+						
+						</tr>
+					</thead>
+					<tbody>
+					<g:each in="${userInstance?.auctions}" status="i" var="auctionInstance">
+						<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+						
+							<td><g:link controller="auction" action="show" id="${auctionInstance.id}">${fieldValue(bean: auctionInstance, field: "datePosted")}</g:link></td>
+						
+							<td>${fieldValue(bean: auctionInstance, field: "description")}</td>
+							
+							<td>${fieldValue(bean: auctionInstance, field: "itemCategory.name")}</td>
+						
+							<td>${fieldValue(bean: auctionInstance, field: "status.category")}</td>
+						
+							<td><g:formatDate date="${auctionInstance.dateEnding}" /></td>
+							
+							<g:if test="${auctionInstance.status.category ==  'Active'}"> 
+								<g:if test="${auctionInstance.leader ==  '---'}"> 
+									<td>New!</td>
+								</g:if>
+								<g:else>
+									<td>${fieldValue(bean: auctionInstance, field: "leader")}</td>
+								</g:else>
+							</g:if>
+							<g:else>					
+								<td>${fieldValue(bean: auctionInstance, field: "leader")}</td>
+							</g:else>
+							
+							<td>${auctionInstance.minBid}</td>
+						
+						</tr>
+					</g:each>
+					</tbody>
+				</table>
+			</div>
+			
+			<div id="list-bidding" class="content scaffold-list" role="main">
 				<h1>Bidding History</h1>
 				<table>
 					<thead>
 						<tr>
+						
+							<g:sortableColumn property="auction.datePosted" title="${message(code: 'auction.datePosted.label', default: 'Date Posted')}" />
 						
 							<g:sortableColumn property="auction.description" title="${message(code: 'auction.description.label', default: 'Description')}" />
 						
@@ -102,7 +160,9 @@
 					<g:each in="${userInstance?.bids?}" status="i" var="userBid">
 						<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 						
-							<td><g:link controller="auction" action="show" id="${userBid.auction.id}">${fieldValue(bean: userBid, field: "auction.description")}</g:link></td>
+							<td><g:link controller="auction" action="show" id="${userBid.auction.id}">${fieldValue(bean: userBid, field: "auction.datePosted")}</g:link></td>
+						
+							<td>${fieldValue(bean: userBid, field: "auction.description")}</td>
 						
 							<td>${fieldValue(bean: userBid, field: "price")}</td>
 							

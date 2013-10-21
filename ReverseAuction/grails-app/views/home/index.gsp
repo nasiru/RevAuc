@@ -120,12 +120,12 @@
 			</ul>
 			</g:hasErrors>
 			
-			<g:form controller="user" action="save" >
+			<g:form controller="home" action="save" >
 				<fieldset class="form">
 					<g:render template="register"/>
 				</fieldset>
 				<fieldset class="buttons">
-					<g:submitButton controller="user" name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
+					<g:submitButton controller="home" name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}" />
 				</fieldset>
 			</g:form>	
 	

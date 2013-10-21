@@ -41,6 +41,7 @@ class BidsController {
 		//bidsInstance.auction = Auction.get(params.auctionId)
 		bidsInstance.bidDate = new Date()
 		bidsInstance.user = currentUser()
+		bidsInstance.auction = auctionInstance
 
 		def minBid = auctionInstance.bids.price.min()
 
@@ -63,18 +64,20 @@ class BidsController {
 		auctionInstance.minBid = bidsInstance.price
 		auctionInstance.leader = bidsInstance.user.username
 
-		auctionInstance.addToBids(bidsInstance)
-
-		def userInstance = User.get(currentUser().id)
-
-		userInstance.addToAuctions(auctionInstance)
-
 		// optimistic locking check
-		//if (!bidsInstance.save(flush: true)) {
-		if (!userInstance.save(flush: true)) {
+		if (!bidsInstance.validate()) {
 			flash.message = message(code: 'bids.negative.message', args: [])
 			redirect(controller: "auction", action: "show", id: auctionInstance.id)
 			return
+		} else {
+
+			def userInstance = User.get(currentUser().id)
+
+			auctionInstance.addToBids(bidsInstance)
+			userInstance.addToBids(bidsInstance)
+
+			auctionInstance.save(flush: true)
+			userInstance.save(flush: true)
 		}
 
 		flash.message = message(code: 'bids.created.message', args: [
@@ -114,7 +117,7 @@ class BidsController {
 			return
 		}
 
-		[bidsInstance: bidsInstance]
+		[bidsInstance: bidsInstance, userid: currentUser() != null ? currentUser().id : 1]
 	}
 
 	@Secured([
