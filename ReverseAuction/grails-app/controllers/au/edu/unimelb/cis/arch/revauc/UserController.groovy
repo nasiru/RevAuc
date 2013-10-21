@@ -34,7 +34,7 @@ class UserController {
 			message(code: 'user.label', default: 'User'),
 			userInstance.id
 		])
-		println params
+
 		SecUserSecRole.create userInstance, SecRole.findById(params.secRole.id)
 		redirect(action: "show", id: userInstance.id)
 	}
@@ -50,7 +50,6 @@ class UserController {
 			return
 		}
 
-		println userInstance.bids.price
 
 		[userInstance: userInstance, userid: currentUser() != null ? currentUser().id : 1]
 	}

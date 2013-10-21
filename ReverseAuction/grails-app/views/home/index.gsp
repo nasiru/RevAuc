@@ -85,14 +85,7 @@
 		<div class="nav" role="navigation">
 			<ul>
 			<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-			<sec:ifNotLoggedIn>
-				<li><g:link controller="login">Login</g:link></li>
-			</sec:ifNotLoggedIn>
-			<sec:ifLoggedIn>
-			
-				<li><g:link controller="user" action="show" id="${user}">My Account</g:link></li>
-				<li><g:link controller="logout">Logout <sec:username/></g:link></li>
-			</sec:ifLoggedIn>
+			<g:render template="/home/navbartop"/>
 				
 			</ul>
 		</div>
@@ -115,7 +108,7 @@
 			
 			<div id="page-body" role="main">
 			
-			<h1><g:message />Register</h1>
+			<h1><g:message />Create Account</h1>
 			<g:if test="${flash.message}">
 			<div class="message" role="status">${flash.message}</div>
 			</g:if>

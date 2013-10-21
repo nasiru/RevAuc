@@ -62,7 +62,6 @@ class AuctionController {
 		auctionInstance.requirements.clear()
 
 		reqMap.each() {
-			//println it.value
 			auctionInstance.addToRequirements(new Requirements(it.value))
 		}
 
@@ -174,7 +173,6 @@ class AuctionController {
 		auctionInstance.requirements.clear()
 
 		reqMap.each() {
-			//println it.value
 			auctionInstance.addToRequirements(new Requirements(it.value))
 		}
 

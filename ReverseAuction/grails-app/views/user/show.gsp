@@ -12,16 +12,7 @@
 		<div class="nav" role="navigation">
 			<ul>
 				<li><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></li>
-				<li><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></li>
-				<li><g:link controller="auction" class="list" action="list"><g:message code="default.list.label" args="['Auction']" /></g:link></li>
-				
-				<sec:ifNotLoggedIn>
-					<li><g:link controller="login">Login</g:link></li>
-				</sec:ifNotLoggedIn>
-				<sec:ifLoggedIn>
-					<li><g:link controller="user" action="show" id="${userid}">My Account</g:link></li>
-					<li><g:link controller="Logout">Logout <sec:username/></g:link></li>
-				</sec:ifLoggedIn>	
+				<g:render template="/home/navbartop"/>
 			</ul>
 		</div>
 		<div id="show-user" class="content scaffold-show" role="main">
@@ -126,15 +117,27 @@
 					</tbody>
 				</table>
 			</div>
-		
-		
-			<g:form>
-				<fieldset class="buttons">
-					<g:hiddenField name="id" value="${userInstance?.id}" />
-					<g:link class="edit" action="edit" id="${userInstance?.id}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
-					<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
-				</fieldset>
-			</g:form>
+				
+			<sec:ifAllGranted roles="ROLE_ADMIN">
+				<g:form>
+					<fieldset class="buttons">
+						<g:hiddenField name="id" value="${userInstance?.id}" />
+						<g:link class="edit" action="edit" id="${userInstance?.id}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+						<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+					</fieldset>
+				</g:form>
+			</sec:ifAllGranted>
+			<sec:ifAllGranted roles="ROLE_USER">
+				<g:if test="${userid == userInstance.id }">
+				<g:form>
+					<fieldset class="buttons">
+						<g:hiddenField name="id" value="${userInstance?.id}" />
+						<g:link class="edit" action="edit" id="${userInstance?.id}"><g:message code="default.button.edit.label" default="Edit" /></g:link>
+						<g:actionSubmit class="delete" action="delete" value="${message(code: 'default.button.delete.label', default: 'Delete')}" onclick="return confirm('${message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');" />
+					</fieldset>
+				</g:form>
+				</g:if>
+			</sec:ifAllGranted>
 		</div>
 	</body>
 </html>
