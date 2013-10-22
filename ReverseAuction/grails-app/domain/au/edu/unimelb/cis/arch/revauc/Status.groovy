@@ -4,5 +4,5 @@ class Status {
 
 	String category
 
-	static constraints = { category unique: true, size: 5..20 }
+	static constraints = { category unique: true, size: 3..20 }
 }
