@@ -1,3 +1,45 @@
+/* Settings for CloudFoundry VM */
+//dataSource {
+//	pooled = true
+//	driverClassName = "com.mysql.jdbc.Driver"
+//	username = "b38f2ea445d5e0"
+//	password = "f8e20ae3"
+//}
+//hibernate {
+//	cache.use_second_level_cache = true
+//	cache.use_query_cache = false
+//	cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory'
+//}
+//// environment specific settings
+//environments {
+//	development {
+//		dataSource {
+//			dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+//			url = "jdbc:mysql://us-cdbr-east-04.cleardb.com:3306/ad_5778c249f21a2c8"
+//			username = "b38f2ea445d5e0"
+//			password = "f8e20ae3"
+//		}
+//	}
+//	test {
+//		dataSource {
+//			dbCreate = "update"
+//			url = "jdbc:mysql://us-cdbr-east-04.cleardb.com:3306/ad_5778c249f21a2c8"
+//			username = "b38f2ea445d5e0"
+//			password = "f8e20ae3"
+//		}
+//	}
+//	production {
+//		dataSource {
+//			dbCreate = "update"
+//			url = url = "jdbc:mysql://us-cdbr-east-04.cleardb.com:3306/ad_5778c249f21a2c8"
+//			username = "b38f2ea445d5e0"
+//			password = "f8e20ae3"
+//		}
+//	}
+//}
+
+
+/* Settings for Uni VM */
 dataSource { pooled = true }
 hibernate {
 	cache.use_second_level_cache = true

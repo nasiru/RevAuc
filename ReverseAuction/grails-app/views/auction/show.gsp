@@ -134,17 +134,18 @@
 						</sec:ifAllGranted>
 					</g:if>
 					<g:else>
-					
-						<ol  style="padding:0px; margin:0px; list-style-type: none">
-							<li class="fieldcontain">
-								<span class="property-value">
-									<g:form controller="auction" action="close">
-										<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
-										<g:submitButton name="close" value="${message(code: 'auction.end', default: 'Close Auction')}"/>
-									</g:form>
-								</span>
-							</li>
-						</ol>
+						<sec:ifAnyGranted roles="ROLE_USER, ROLE_ADMIN">
+							<ol  style="padding:0px; margin:0px; list-style-type: none">
+								<li class="fieldcontain">
+									<span class="property-value">
+										<g:form controller="auction" action="close">
+											<g:hiddenField name="auctionId" value="${auctionInstance?.id}"/>
+											<g:submitButton name="close" value="${message(code: 'auction.end', default: 'Close Auction')}"/>
+										</g:form>
+									</span>
+								</li>
+							</ol>
+						</sec:ifAnyGranted>
 					</g:else>
 				</g:if>		
 			
